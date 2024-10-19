@@ -4,6 +4,7 @@ import com.vcdev.event_management_system.dto.UserDTO;
 import com.vcdev.event_management_system.entity.User;
 import com.vcdev.event_management_system.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -19,9 +20,9 @@ public class AuthService {
         return "Login";
     }
 
-    public String register(UserDTO user) {
+    public ResponseEntity<String> register(UserDTO user) {
         if(userRepository.findByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Email já cadastrado!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email já cadastrado!");
         }
 
         User newUser = new User();
@@ -30,7 +31,7 @@ public class AuthService {
         newUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepository.save(newUser);
 
-        return "Usuário registrado com sucesso!";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
     }
 
     public String logout() {

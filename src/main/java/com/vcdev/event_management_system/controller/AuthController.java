@@ -3,6 +3,7 @@ package com.vcdev.event_management_system.controller;
 import com.vcdev.event_management_system.dto.UserDTO;
 import com.vcdev.event_management_system.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +23,11 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public String register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> register(@RequestBody UserDTO userDTO) {
         try {
             return authService.register(userDTO);
         } catch (RuntimeException e) {
-            return e.getMessage();
+            return ResponseEntity.status(500).body("Erro interno");
         }
     }
 
