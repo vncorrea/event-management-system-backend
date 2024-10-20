@@ -9,11 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class TokenService {
     @Value("${jwt.secret}")
     private String secret;
+
+    private final Set<String> invalidTokens = new HashSet<>();
 
     public String generateToken(User user) {
         try {
@@ -42,5 +46,9 @@ public class TokenService {
 
     private Instant generateExpirationDate() {
         return Instant.now().plusSeconds(3600);
+    }
+
+    public void invalidateToken(String token) {
+        invalidTokens.add(token);
     }
 }

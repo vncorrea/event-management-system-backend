@@ -51,7 +51,8 @@ public class AuthService {
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
     }
 
-    public String logout() {
-        return "Logout";
+    public ResponseEntity<String> logout(String token) {
+        tokenService.invalidateToken(token);
+        return ResponseEntity.ok("Logout realizado com sucesso!");
     }
 }
