@@ -16,8 +16,17 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public String login() {
-        return "Login";
+    public ResponseEntity<String> login(UserDTO userDTO) {
+        User user = userRepository.findByEmail(userDTO.getEmail());
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado!");
+        }
+
+        if(!new BCryptPasswordEncoder().matches(userDTO.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Senha incorreta!");
+        }
+
+        return ResponseEntity.ok("Login");
     }
 
     public ResponseEntity<String> register(UserDTO user) {
@@ -36,9 +45,5 @@ public class AuthService {
 
     public String logout() {
         return "Logout";
-    }
-
-    public String update() {
-        return "Update";
     }
 }
