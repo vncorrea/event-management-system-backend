@@ -36,7 +36,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm).withIssuer("auth0").build().verify(token).getSubject();
         } catch (JWTVerificationException exception) {
-            throw null;
+            throw new RuntimeException("Token inválido");
         }
     }
 

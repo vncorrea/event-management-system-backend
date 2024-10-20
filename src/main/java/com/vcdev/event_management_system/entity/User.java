@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -29,4 +32,8 @@ public class User {
 
     @Column(columnDefinition = "boolean default false")
     private boolean isAdmin;
+
+    public Collection<? extends GrantedAuthority> getRoles() {
+        return null;
+    }
 }

@@ -1,7 +1,9 @@
 package com.vcdev.event_management_system.service;
 
+import com.vcdev.event_management_system.dto.LoginResponse;
 import com.vcdev.event_management_system.dto.UserDTO;
 import com.vcdev.event_management_system.entity.User;
+import com.vcdev.event_management_system.infra.security.TokenService;
 import com.vcdev.event_management_system.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,21 +14,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class AuthService {
     private final UserRepository userRepository;
 
-    public AuthService(UserRepository userRepository) {
+    private final TokenService tokenService;
+
+    public AuthService(UserRepository userRepository, TokenService tokenService) {
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
-    public ResponseEntity<String> login(UserDTO userDTO) {
+    public ResponseEntity<LoginResponse> login(UserDTO userDTO) {
         User user = userRepository.findByEmail(userDTO.getEmail());
         if(user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse(null, null, "Usuário não encontrado!"));
         }
 
         if(!new BCryptPasswordEncoder().matches(userDTO.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Senha incorreta!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse(null, null, "Senha incorreta!"));
         }
 
-        return ResponseEntity.ok("Login");
+        String token = this.tokenService.generateToken(user);
+        LoginResponse loginResponse = new LoginResponse(token, user, null);
+
+        return ResponseEntity.ok(loginResponse);
     }
 
     public ResponseEntity<String> register(UserDTO user) {
